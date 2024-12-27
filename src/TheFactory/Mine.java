@@ -21,6 +21,7 @@ public class Mine {
     public Mine(Headquarters.RawMaterial product) {
         this.product = product;
         mineID = lastMineIDMade++;
+        Headquarters.mineList.add(this);
     }
     public Mine() {
         mineID = lastMineIDMade++;
@@ -32,6 +33,14 @@ public class Mine {
         else throw new Exception("Mine is full");
     }
     public void update() {
-        Headquarters.wallet += getProductValue(product);
+        Headquarters.rawMaterialStorage.addToStorage(product);
+    }
+
+    public void addMineToGUI() {
+        GUI.clearTerminal();
+        GUI.addToCommandOutput("Mine ID: " + mineID);
+        GUI.addToCommandOutput("Product: " + product);
+        GUI.addToCommandOutput("Employees: " + employees.size());
+        GUI.addToCommandOutput("Wallet: $" + Headquarters.wallet);
     }
 }

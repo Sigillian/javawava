@@ -11,7 +11,7 @@ public class CommandHandler {
         String mainCommand = parts[0].toLowerCase();
 
         switch (mainCommand) {
-            case "check" -> check(parts[1]);
+            case "check" -> check(parts);
             case "sell" -> System.out.print("LALALALLA");
             case "shop" -> Shop.openShop();
             case "demolish" -> System.out.print("LALALALLA");
@@ -60,12 +60,30 @@ public class CommandHandler {
                     }
                 }
             }
-            default -> GUI.addToCommandOutput("Unknown command: " + mainCommand);
+            default -> {
+                GUI.clearTerminal();
+                GUI.addToCommandOutput("Unknown command: " + mainCommand);
+            }
         }
     }
-    public static void check(String type) {
-        switch (type) {
-            case "corp" -> Headquarters.printCorp();
+    public static void check(String[] type) {
+        try {
+            switch (type[1]) {
+                case "corp" -> Headquarters.printCorp();
+                case "mine" -> Headquarters.mineList.get(Integer.parseInt(type[2])).addMineToGUI();
+                case "farm" -> Headquarters.farmList.get(Integer.parseInt(type[2])).addFarmToGUI();
+                case "factory" -> Headquarters.factoryList.get(Integer.parseInt(type[2])).addFactoryToGUI();
+                case "housing" -> Headquarters.housingList.get(Integer.parseInt(type[2])).addHousingToGUI();
+                case "employee" -> Headquarters.employeeList.get(Integer.parseInt(type[2])).addEmployeeToGUI();
+                default -> {
+                    GUI.clearTerminal();
+                    GUI.addToCommandOutput("Not a checkable item");
+                }
+            }
+        }catch(ArrayIndexOutOfBoundsException e) {
+            GUI.addToCommandOutput("ID not found");
+        }catch(NumberFormatException e) {
+            GUI.addToCommandOutput("Invalid ID");
         }
     }
 }

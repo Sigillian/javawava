@@ -16,6 +16,7 @@ public class Housing {
     public Housing(ResidentType residentType) {
         this.residentType = residentType;
         housingID = lastHousingIDMade++;
+        Headquarters.housingList.add(this);
     }
     private boolean checkIfOvercrowded() {
         return switch (residentType) {
@@ -44,9 +45,11 @@ public class Housing {
         }
         else throw new Exception("Housing is full");
     }
-
-    @Override
-    public String toString() {
-        return "\nHousing ID: " + housingID + "\n\tResidentIDs: \n\t\t" + Employee.writeEmployeeIDs(residents) + "Food Used: " + ((checkIfOvercrowded() ? 2 : 1) * residents.size());
+    public void addHousingToGUI() {
+        GUI.clearTerminal();
+        GUI.addToCommandOutput("Housing ID: " + housingID);
+        GUI.addToCommandOutput("Resident Type: " + residentType);
+        GUI.addToCommandOutput("Residents: " + residents.size());
+        GUI.addToCommandOutput("Resident List: " + residents.toString());
     }
 }

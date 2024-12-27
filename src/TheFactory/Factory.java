@@ -19,4 +19,12 @@ public class Factory {
     public void update() {
         Headquarters.wallet += product.price;
     }
+
+    public void addFactoryToGUI() {
+        GUI.clearTerminal();
+        GUI.addToCommandOutput("Factory ID: " + factoryID);
+        GUI.addToCommandOutput("Product: " + product + " (" + product.price + "p)");
+        GUI.addToCommandOutput("Employees: " + employees.size());
+        GUI.addToCommandOutput("Wallet: $" + Headquarters.wallet);
+    }
 }

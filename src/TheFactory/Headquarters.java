@@ -124,6 +124,29 @@ public class Headquarters {
         Crystal,
         Platinum
     }
+    public static class RawMaterialStorage {
+        private final Object[][] matCommaCount = new Object[RawMaterial.values().length][2];
+        public RawMaterialStorage() {
+            for(int i = 0; i < RawMaterial.values().length; i++) {
+                matCommaCount[i][0] = RawMaterial.values()[i];
+                matCommaCount[i][1] = 0;
+            }
+        }
+        public void addToStorage (RawMaterial rm){
+            for(Object[] j : matCommaCount) {
+                if( rm == j[0])
+                    j[1] = Integer.parseInt(j[1].toString()) + 1;
+            }
+        }
+        public String getAsString() {
+            String k = "";
+            for(Object[] o : matCommaCount) {
+                k += (o[0] + " " + o[1]+"ct]");
+            }
+            return k;
+        }
+    }
+    public static final RawMaterialStorage rawMaterialStorage = new RawMaterialStorage();
     public static ArrayList<Product> inventory = new ArrayList<>();
     public final static ArrayList<Factory> factoryList = new ArrayList<>();
     public final static ArrayList<Housing> housingList = new ArrayList<>();
@@ -183,20 +206,13 @@ public class Headquarters {
         }
         System.gc();
     }
-    public static void update() {
-        for (Factory f : factoryList)
-            f.update();
-        for (Farm f : farmList)
-            f.update();
-        for (Mine m : mineList)
-            m.update();
-        for (Housing h : housingList)
-            h.updateResidents();
-    }
-
     public static void assignEmployee(int employeeID, int houseID, Building job, int BuildingID) {
         for(Employee e : employeeList)
             if(e.employeeID == employeeID) {
+                if(e.age < 5110) {
+                    GUI.clearTerminal();
+                    GUI.addToCommandOutput("Employee too young");
+                }
                 Employee.assignEmployee(e, job);
                 switch (job.getClass().getSimpleName()) {
                     case "Factory":
@@ -205,29 +221,33 @@ public class Headquarters {
                                 try {
                                     i.addEmployee(e);
                                 }catch (Exception ex) {
+                                    GUI.clearTerminal();
                                     GUI.addToCommandOutput("Factory unavailable");
                                 }
                             }break;
                     case "Mine":
-                    for(Mine i : mineList)
-                            if(i.mineID == BuildingID) {
-                                try {
-                                    i.addEmployee(e);
-                                }catch (Exception ex) {
-                                    GUI.addToCommandOutput("Mine unavailable");
-                                }
-                            }break;
+                        for(Mine i : mineList)
+                                if(i.mineID == BuildingID) {
+                                    try {
+                                        i.addEmployee(e);
+                                    }catch (Exception ex) {
+                                        GUI.clearTerminal();
+                                        GUI.addToCommandOutput("Factory unavailable");
+                                    }
+                                }break;
                     case "Farm":
                         for(Farm i : farmList)
                             if(i.farmID == BuildingID) {
                                 try {
                                     i.addEmployee(e);
                                 }catch (Exception ex) {
-                                    GUI.addToCommandOutput("Farm unavailable");
+                                    GUI.clearTerminal();
+                                    GUI.addToCommandOutput("Factory unavailable");
                                 }
                             }break;
                     case "Housing":
-                        GUI.addToCommandOutput("Housing is not a valid job");
+                        GUI.clearTerminal();
+                        GUI.addToCommandOutput("Not a job");
                 }
                 for(Housing h : housingList)
                     if(h.housingID == houseID) {
@@ -241,37 +261,22 @@ public class Headquarters {
     }
 
     public static void initializeGame() {
-        // Initialize factories, mines, farms, and housing
-
-        // Create a housing unit and add it to the housing list
         Housing housing = new Housing(Housing.ResidentType.hut);
-        housingList.add(housing);
 
-        // Create a mine (with a random product) and add it to the mine list
-        Mine mine = new Mine();
-        mineList.add(mine);
+        Mine mine = new Mine(RawMaterial.Stone);
 
-        // Add 5 initial employees to the employee list (one for each building)
+        Farm farm = new Farm(CropType.Potatoes);
+        Farm farm1 = new Farm(CropType.Potatoes);
+        Farm farm2 = new Farm(CropType.Potatoes);
+        Farm farm3 = new Farm(CropType.Potatoes);
+
         for (int i = 0; i < 5; i++) {
             Employee employee = Employee.generateEmployee(Headquarters.Building.Factory);
-            employeeList.add(employee);
 
-            // Add the employee to the first available housing unit
             try {
                 housing.addEmployee(employee);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-
-            // Randomly assign employees to buildings
-            if (i % 2 == 0) {
-
-            } else {
-                try {
-                    mine.addEmployee(employee);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
 
@@ -283,6 +288,7 @@ public class Headquarters {
     }
 
     public static void printCorp () {
+        GUI.clearTerminal();
         GUI.addToCommandOutput("Factories: " + factoryList.size());
         GUI.addToCommandOutput("Mines: " + mineList.size());
         GUI.addToCommandOutput("Farms: " + farmList.size());
@@ -291,15 +297,17 @@ public class Headquarters {
         GUI.addToCommandOutput("Inventory: " + inventory.toString());
         GUI.addToCommandOutput("Food Supply: " + foodSupply);
         GUI.addToCommandOutput("Wallet: $" + wallet);
+        GUI.addToCommandOutput("Raw Materials: " + Arrays.toString(rawMaterialStorage.getAsString().split("]")));
     }
 
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GUI::new);
-        // Initialize the game state (buildings, employees, etc.)
         initializeGame();
 
         // Update the display to show the initial game state
         GUI.updateDisplay();
+        Updater u = new Updater();
+        u.start();
     }
 }

@@ -1,6 +1,10 @@
 package Main;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import Wordle.Wordle;
 
 public class Lobby {
@@ -20,9 +24,5 @@ public class Lobby {
             e.printStackTrace();
             clearTerminal();
         }
-    }
-
-    public static void main (String[] args) {
-        Wordle.showMenu();
     }
 }
