@@ -3,10 +3,10 @@ package TheFactory;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Employee {
-    private static int lastEmployeeIDMade = 0;
-    public Headquarters.Building jobType;
-    public int strength, intelligence, employeeID, age;
+    public class Employee {
+        public static int lastEmployeeIDMade = 0;
+        public Headquarters.Building jobType;
+        public int strength, intelligence, employeeID, age;
     public Employee(int age, int strength, int intelligence, int employeeID, Headquarters.Building jobType) {
         this.age = age;
         this.strength = strength;
@@ -71,7 +71,6 @@ public class Employee {
     }
 
     public void addEmployeeToGUI() {
-        GUI.clearTerminal();
         GUI.addToCommandOutput("Employee ID: " + employeeID);
         GUI.addToCommandOutput("Strength: " + strength);
         GUI.addToCommandOutput("Intelligence: " + intelligence);

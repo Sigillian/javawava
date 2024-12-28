@@ -1,7 +1,7 @@
 package TheFactory;
 
 public class Product {
-    private static Product[] prods = {
+    public static Product[] prods = {
         new Product("Dowsing-Rod", 40),
     };
 

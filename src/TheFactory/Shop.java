@@ -30,7 +30,6 @@ public class Shop {
         ArrayList<Product> productList = new ArrayList<>();
         for(int i = 0; i < new Random().nextInt(8,12); i++) {
             Product temp = possibleProducts[new Random().nextInt(possibleProducts.length)];
-            System.out.println(temp);
             if(!productList.contains(temp))
                 productList.add(temp);
         }

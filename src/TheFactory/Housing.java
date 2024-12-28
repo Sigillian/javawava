@@ -46,7 +46,6 @@ public class Housing {
         else throw new Exception("Housing is full");
     }
     public void addHousingToGUI() {
-        GUI.clearTerminal();
         GUI.addToCommandOutput("Housing ID: " + housingID);
         GUI.addToCommandOutput("Resident Type: " + residentType);
         GUI.addToCommandOutput("Residents: " + residents.size());

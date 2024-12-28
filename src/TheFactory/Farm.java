@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Farm {
     public final int farmID;
     private final Headquarters.CropType product;
-    private static int lastFarmIDMade = 0;
+    public static int lastFarmIDMade = 0; //Needs to be changed when loading game
     public final ArrayList<Employee> employees = new ArrayList<>();
     private static int getProductValue(Headquarters.CropType rm) {
         return switch (rm) {
@@ -29,9 +29,13 @@ public class Farm {
     }
 
     public void addFarmToGUI() {
-        GUI.clearTerminal();
         GUI.addToCommandOutput("Farm ID: " + farmID);
         GUI.addToCommandOutput("Product: " + product + " (" + getProductValue(product) + ")f");
         GUI.addToCommandOutput("Employees: " + employees.size());
+    }
+
+    @Override
+    public String toString() {
+        return "farm " + farmID + " making " + product;
     }
 }

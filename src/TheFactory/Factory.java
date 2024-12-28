@@ -21,7 +21,6 @@ public class Factory {
     }
 
     public void addFactoryToGUI() {
-        GUI.clearTerminal();
         GUI.addToCommandOutput("Factory ID: " + factoryID);
         GUI.addToCommandOutput("Product: " + product + " (" + product.price + "p)");
         GUI.addToCommandOutput("Employees: " + employees.size());

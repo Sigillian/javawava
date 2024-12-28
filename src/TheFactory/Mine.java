@@ -6,7 +6,7 @@ import java.util.Random;
 public class Mine {
     public final int mineID;
     private final Headquarters.RawMaterial product;
-    private static int lastMineIDMade = 0;
+    public static int lastMineIDMade = 0; //Needs to be changed when loading game
     public final ArrayList<Employee> employees = new ArrayList<>();
     private static int getProductValue(Headquarters.RawMaterial rm) {
         return switch (rm) {
@@ -37,7 +37,6 @@ public class Mine {
     }
 
     public void addMineToGUI() {
-        GUI.clearTerminal();
         GUI.addToCommandOutput("Mine ID: " + mineID);
         GUI.addToCommandOutput("Product: " + product);
         GUI.addToCommandOutput("Employees: " + employees.size());

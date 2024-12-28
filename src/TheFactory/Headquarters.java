@@ -124,6 +124,19 @@ public class Headquarters {
         Crystal,
         Platinum
     }
+    public enum RefinedMaterial {
+        Crude_Pickaxe,
+        Iron_Pickaxe,
+        Steel_Pickaxe,
+        Crude_Trough,
+        Iron_Scythe,
+        Steel_Plow,
+        Processed_Iron,
+        Processed_Gold,
+        Processed_Crystal,
+        Processed_Platinum,
+        Steel
+    }
     public static class RawMaterialStorage {
         private final Object[][] matCommaCount = new Object[RawMaterial.values().length][2];
         public RawMaterialStorage() {
@@ -132,22 +145,45 @@ public class Headquarters {
                 matCommaCount[i][1] = 0;
             }
         }
+        public int getRawMaterialCount(RawMaterial rm) {
+            for(Object[] j : matCommaCount) {
+                if( rm == j[0])
+                    return Integer.parseInt(j[1].toString());
+            }
+            return 0;
+        }
         public void addToStorage (RawMaterial rm){
             for(Object[] j : matCommaCount) {
                 if( rm == j[0])
                     j[1] = Integer.parseInt(j[1].toString()) + 1;
             }
         }
-        public String getAsString() {
-            String k = "";
-            for(Object[] o : matCommaCount) {
-                k += (o[0] + " " + o[1]+"ct]");
+        public void removeFromStorage (RawMaterial rm, int count){
+            for(Object[] j : matCommaCount) {
+                if( rm == j[0])
+                    j[1] = Integer.parseInt(j[1].toString()) - count;
             }
-            return k;
+        }
+        public String getAsString() {
+            StringBuilder k = new StringBuilder();
+            for(Object[] o : matCommaCount) {
+                k.append(o[0]).append(" ").append(o[1]).append("ct]");
+            }
+            return k.toString();
         }
     }
+    public static int getRawMaterialValue(RawMaterial rm) {
+        return switch (rm) {
+            case Stone -> 5;
+            case Coal -> 8;
+            case Iron -> 20;
+            case Gold -> 30;
+            case Crystal -> 40;
+            case Platinum -> 45;
+        };
+    }
     public static final RawMaterialStorage rawMaterialStorage = new RawMaterialStorage();
-    public static ArrayList<Product> inventory = new ArrayList<>();
+    public static final ArrayList<Product> inventory = new ArrayList<>();
     public final static ArrayList<Factory> factoryList = new ArrayList<>();
     public final static ArrayList<Housing> housingList = new ArrayList<>();
     public final static ArrayList<Mine> mineList = new ArrayList<>();
@@ -171,38 +207,38 @@ public class Headquarters {
     }
     public static void destroyBuilding(Building type, int ID) {
         switch (type) {
-            case Factory:
-                for(Factory i : factoryList) {
-                    if(i.factoryID == ID) {
-                        i = null;
-                        factoryList.removeIf(Objects::isNull);
-                        break;
+            case Building.Farm -> {
+                for (int i = 0; i < farmList.size(); i++) {
+                    if (farmList.get(i).farmID == ID) {
+                        farmList.remove(i);
+                        return;
                     }
-                }
-            case Mine:
-                for(Mine i : mineList) {
-                    if(i.mineID == ID) {
-                        i = null;
-                        mineList.removeIf(Objects::isNull);
-                        break;
+                }throw new ArrayIndexOutOfBoundsException();
+            }
+            case Building.Mine -> {
+                for (int i = 0; i < mineList.size(); i++) {
+                    if (mineList.get(i).mineID == ID) {
+                        mineList.remove(i);
+                        return;
                     }
-                }
-            case Farm:
-                for(Farm i : farmList) {
-                    if(i.farmID == ID) {
-                        i = null;
-                        farmList.removeIf(Objects::isNull);
-                        break;
+                }throw new ArrayIndexOutOfBoundsException();
+            }
+            case Building.Housing -> {
+                for (int i = 0; i < housingList.size(); i++) {
+                    if (housingList.get(i).housingID == ID) {
+                        housingList.remove(i);
+                        return;
                     }
-                }
-            case Housing:
-                for(Housing i : housingList) {
-                    if(i.housingID == ID) {
-                        i = null;
-                        housingList.removeIf(Objects::isNull);
-                        break;
+                }throw new ArrayIndexOutOfBoundsException();
+            }
+            case Building.Factory -> {
+                for (int i = 0; i < factoryList.size(); i++) {
+                    if (factoryList.get(i).factoryID == ID) {
+                        factoryList.remove(i);
+                        return;
                     }
-                }
+                }throw new ArrayIndexOutOfBoundsException();
+            }
         }
         System.gc();
     }
