@@ -51,4 +51,10 @@ public class Housing {
         GUI.addToCommandOutput("Residents: " + residents.size());
         GUI.addToCommandOutput("Resident List: " + residents.toString());
     }
+    public String toString() {
+        StringBuilder k = new StringBuilder();
+        for(Employee e : residents)
+            k.append(e.employeeID).append(", ");
+        return "housing " + housingID + " type " + residentType + " holding following residents: [" + k + "]";
+    }
 }

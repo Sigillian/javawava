@@ -42,4 +42,8 @@ public class Mine {
         GUI.addToCommandOutput("Employees: " + employees.size());
         GUI.addToCommandOutput("Wallet: $" + Headquarters.wallet);
     }
+
+    public String toString() {
+        return "mine " + mineID + " making " + product;
+    }
 }

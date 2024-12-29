@@ -1,4 +1,0 @@
-farm 0 making Potatoes
-farm 1 making Potatoes
-farm 2 making Potatoes
-farm 3 making Potatoes

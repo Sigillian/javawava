@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Factory {
     public final int factoryID;
     private final Product product;
-    private static int lastFactoryIDMade = 0;
+    public static int lastFactoryIDMade = 0;
     public final ArrayList<Employee> employees = new ArrayList<>();
     public Factory(Product product) {
         this.product = product;
@@ -25,5 +25,8 @@ public class Factory {
         GUI.addToCommandOutput("Product: " + product + " (" + product.price + "p)");
         GUI.addToCommandOutput("Employees: " + employees.size());
         GUI.addToCommandOutput("Wallet: $" + Headquarters.wallet);
+    }
+    public String toString() {
+        return "factory " + factoryID + " making " + product;
     }
 }
