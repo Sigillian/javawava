@@ -22,14 +22,32 @@ import java.util.Random;
         this.jobType = null;
         Headquarters.employeeList.add(this);
     }
+        public Employee(int eID,int age, int strength, int intelligence) {
+            this.employeeID = eID;
+            this.age = age;
+            this.strength = strength;
+            this.intelligence = intelligence;
+            this.jobType = null;
+            Headquarters.employeeList.add(this);
+        }
     public static Employee generateEmployee(Headquarters.Building job) {
         Random rg = new Random();
         return new Employee(rg.nextInt(5840,10950), rg.nextInt(100) + 1, rg.nextInt(100) + 1, lastEmployeeIDMade++, job);
     }
-    public static Employee generateEmployee() {
+    public static Employee generateEmployee() { //FOR JOB BOARD
         Random rg = new Random();
         return new Employee(rg.nextInt(5840,10950), rg.nextInt(100) + 1, rg.nextInt(100) + 1);
     }
+    public static Employee generateChild(Employee parent) { //FOR  BABY MAKING
+        Random rg = new Random();
+        return new Employee(
+                        lastEmployeeIDMade++,
+                        rg.nextInt(5000),
+                        (int) (parent.strength * rg.nextDouble(.8, 1.2) > 100 ? 100 : parent.strength * rg.nextDouble(.8, 1.2)),
+                        (int) (parent.intelligence * rg.nextDouble(.8, 1.2) > 100 ? 100 : parent.intelligence * rg.nextDouble(.8, 1.2))
+        );
+    }
+
     public static void assignEmployee(Employee e, Headquarters.Building job) {
         e.jobType = job;
     }
@@ -47,12 +65,9 @@ import java.util.Random;
         else if (new Random().nextInt(8) % 2 == 0) Headquarters.killEmployee(employeeID);
         try {
             if (age > 7300 && age < 22000 && new Random().nextInt() % (525 / (Headquarters.foodSupply * 5 / ((Headquarters.employeeList.size()) + 1))) == 0) {//Add a child at random
-                Headquarters.employeeList.add(
-                        new Employee(
-                                0,
-                                (strength > 84 ? (int) (strength * new Random().nextDouble(.8, 1.2)) : 100),
-                                (intelligence > 84 ? (int) (intelligence * new Random().nextDouble(.8, 1.2)) : 100)
-                        ));
+                Employee e = generateChild(this);
+                Headquarters.employeeList.add(e);
+                Headquarters.housingList.get(new Random().nextInt(Headquarters.housingList.size())).addEmployee(e);
             }
         }catch (Exception _) {}
     }
@@ -75,5 +90,9 @@ import java.util.Random;
         GUI.addToCommandOutput("Strength: " + strength);
         GUI.addToCommandOutput("Intelligence: " + intelligence);
         GUI.addToCommandOutput("Age: " + (age / 365));
+    }
+
+    public String getAsSaveable() {
+        return "emp" + employeeID + " " + strength + " " + intelligence + " " + age + " " + jobType;
     }
 }

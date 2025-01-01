@@ -33,7 +33,8 @@ public class Mine {
         else throw new Exception("Mine is full");
     }
     public void update() {
-        Headquarters.rawMaterialStorage.addToStorage(product);
+        for(Employee e : employees)
+            Headquarters.rawMaterialStorage.addToStorage(product);
     }
 
     public void addMineToGUI() {
@@ -45,5 +46,11 @@ public class Mine {
 
     public String toString() {
         return "mine " + mineID + " making " + product;
+    }
+    public String getAsSaveable() {
+        String employeeIds = "";
+        for(Employee e : employees)
+            employeeIds += e.employeeID + ",";
+        return "min" + mineID + " " + product + "[" + employeeIds + "]";
     }
 }

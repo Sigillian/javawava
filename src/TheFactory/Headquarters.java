@@ -105,6 +105,7 @@ import java.util.Objects;
  *
  */
 public class Headquarters {
+    static Updater u;
     public enum Building {
         Factory,
         Mine,
@@ -138,7 +139,7 @@ public class Headquarters {
         Steel
     }
     public static class RawMaterialStorage {
-        private final Object[][] matCommaCount = new Object[RawMaterial.values().length][2];
+        public final Object[][] matCommaCount = new Object[RawMaterial.values().length][2];
         public RawMaterialStorage() {
             for(int i = 0; i < RawMaterial.values().length; i++) {
                 matCommaCount[i][0] = RawMaterial.values()[i];
@@ -248,10 +249,11 @@ public class Headquarters {
                 if(e.age < 5110) {
                     GUI.clearTerminal();
                     GUI.addToCommandOutput("Employee too young");
+                    return;
                 }
                 Employee.assignEmployee(e, job);
-                switch (job.getClass().getSimpleName()) {
-                    case "Factory":
+                switch (job) {
+                    case Factory:
                         for(Factory i : factoryList)
                             if(i.factoryID == BuildingID) {
                                 try {
@@ -261,7 +263,7 @@ public class Headquarters {
                                     GUI.addToCommandOutput("Factory unavailable");
                                 }
                             }break;
-                    case "Mine":
+                    case Mine:
                         for(Mine i : mineList)
                                 if(i.mineID == BuildingID) {
                                     try {
@@ -271,7 +273,7 @@ public class Headquarters {
                                         GUI.addToCommandOutput("Factory unavailable");
                                     }
                                 }break;
-                    case "Farm":
+                    case Farm:
                         for(Farm i : farmList)
                             if(i.farmID == BuildingID) {
                                 try {
@@ -281,7 +283,7 @@ public class Headquarters {
                                     GUI.addToCommandOutput("Factory unavailable");
                                 }
                             }break;
-                    case "Housing":
+                    case Housing:
                         GUI.clearTerminal();
                         GUI.addToCommandOutput("Not a job");
                 }
@@ -303,14 +305,36 @@ public class Headquarters {
 
         Farm farm = new Farm(CropType.Potatoes);
         Farm farm1 = new Farm(CropType.Potatoes);
-        Farm farm2 = new Farm(CropType.Potatoes);
-        Farm farm3 = new Farm(CropType.Potatoes);
+        Farm farm2 = new Farm(CropType.Carrots);
+        Farm farm3 = new Farm(CropType.Bread);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             Employee employee = Employee.generateEmployee(Headquarters.Building.Factory);
+
 
             try {
                 housing.addEmployee(employee);
+                switch(i) {
+                    case 0:
+                        farm.addEmployee(employee);
+                        Employee.assignEmployee(employee, Headquarters.Building.Farm);
+                        break;
+                    case 1:
+                        farm1.addEmployee(employee);
+                        Employee.assignEmployee(employee, Headquarters.Building.Farm);
+                        break;
+                    case 2:
+                        farm2.addEmployee(employee);
+                        Employee.assignEmployee(employee, Headquarters.Building.Farm);
+                        break;
+                    case 3:
+                        farm3.addEmployee(employee);
+                        Employee.assignEmployee(employee, Headquarters.Building.Farm);
+                        break;
+                    default:
+                        mine.addEmployee(employee);
+                        Employee.assignEmployee(employee, Headquarters.Building.Mine);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -343,7 +367,7 @@ public class Headquarters {
 
         // Update the display to show the initial game state
         GUI.updateDisplay();
-        Updater u = new Updater();
+        u = new Updater();
         u.start();
     }
 }

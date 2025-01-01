@@ -19,6 +19,12 @@ public class Factory {
     public void update() {
         Headquarters.wallet += product.price;
     }
+    public String getAsSaveable() {
+        String employeeIds = "";
+        for(Employee e : employees)
+            employeeIds += e.employeeID + ",";
+        return "fac" + factoryID + " " + product.name + "[" + employeeIds + "]";
+    }
 
     public void addFactoryToGUI() {
         GUI.addToCommandOutput("Factory ID: " + factoryID);

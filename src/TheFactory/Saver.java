@@ -1,99 +1,88 @@
 package TheFactory;
 
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class Saver {
-
-    private static String encode(String toEncode) {
-        StringBuilder binaryStringBuilder = new StringBuilder();
-        boolean flipThird = true; // Alternate flipping every third and fifth bit
-
-        // Convert each character to ASCII and then to binary
-        for (char character : toEncode.toCharArray()) {
-            int asciiValue = (int) character; // Get ASCII value of the character
-            String binaryString = Integer.toBinaryString(asciiValue); // Convert ASCII value to binary
-
-            // Ensure each binary string is 8 bits long (padding with leading zeros if necessary)
-            while (binaryString.length() < 8) {
-                binaryString = "0" + binaryString;
-            }
-
-            char[] binaryArray = binaryString.toCharArray();
-            for (int i = 0; i < binaryArray.length; i++) {
-                // Flip every third or fifth bit based on the toggle
-                if (flipThird && (i + 1) % 3 == 0) {
-                    binaryArray[i] = binaryArray[i] == '0' ? '1' : '0';
-                } else if (!flipThird && (i + 1) % 5 == 0) {
-                    binaryArray[i] = binaryArray[i] == '0' ? '1' : '0';
-                }
-            }
-            flipThird = !flipThird; // Alternate between third and fifth bit flipping
-
-            binaryStringBuilder.append(new String(binaryArray)); // Append the modified binary string
-        }
-
-        return binaryStringBuilder.toString(); // Return the complete binary representation
-    }
-
-    private static String decode(String binaryString) {
-        StringBuilder decodedStringBuilder = new StringBuilder();
-        boolean flipThird = true; // Alternate flipping every third and fifth bit
-
-        // Process the binary string in chunks of 8 bits
-        for (int i = 0; i < binaryString.length(); i += 8) {
-            String byteString = binaryString.substring(i, i + 8); // Get 8-bit chunk
-
-            char[] binaryArray = byteString.toCharArray();
-            for (int j = 0; j < binaryArray.length; j++) {
-                // Reverse flip every third or fifth bit based on the toggle
-                if (flipThird && (j + 1) % 3 == 0) {
-                    binaryArray[j] = binaryArray[j] == '0' ? '1' : '0';
-                } else if (!flipThird && (j + 1) % 4 == 0) {
-                    binaryArray[j] = binaryArray[j] == '0' ? '1' : '0';
-                }
-            }
-            flipThird = !flipThird; // Alternate between third and fifth bit flipping
-
-            String originalBinary = new String(binaryArray);
-            int asciiValue = Integer.parseInt(originalBinary, 2); // Convert binary to ASCII value
-            char character = (char) asciiValue; // Convert ASCII value to character
-            decodedStringBuilder.append(character); // Append character to result
-        }
-
-        return decodedStringBuilder.toString(); // Return the decoded string
-    }
-
     public static void saveGame() {
-        StringBuilder saveData = new StringBuilder();
+        GUI.clearTerminal();
+        GUI.addToCommandOutput("Saving game...");
+        String toSave = "";
+        toSave += "hqf"+Headquarters.foodSupply + "\n";
+        toSave += "hqw"+Headquarters.wallet + "\n";
+        toSave += "lmfac" + Factory.lastFactoryIDMade + "\n";
+        toSave += "lmmin" + Mine.lastMineIDMade + "\n";
+        toSave += "lmfar" + Farm.lastFarmIDMade + "\n";
+        toSave += "lmhou" + Housing.lastHousingIDMade + "\n";
+        toSave += "lmemp" + Employee.lastEmployeeIDMade + "\n";
         for(Product p : Headquarters.inventory)
-            saveData.append(p.toString()).append("\n");
-        for(Employee e : Headquarters.employeeList)
-            saveData.append(e.toString()).append("\n");
+            toSave += p.getAsSaveable() + "\n";
         for(Factory f : Headquarters.factoryList)
-            saveData.append(f.toString()).append("\n");
-        for(Farm f : Headquarters.farmList)
-            saveData.append(f.toString()).append("\n");
+            toSave += f.getAsSaveable() + "\n";
         for(Mine m : Headquarters.mineList)
-            saveData.append(m.toString()).append("\n");
+            toSave += m.getAsSaveable() + "\n";
+        for(Farm f : Headquarters.farmList)
+            toSave += f.getAsSaveable() + "\n";
         for(Housing h : Headquarters.housingList)
-            saveData.append(h.toString()).append("\n");
-        saveData.append(Headquarters.rawMaterialStorage.getAsString()).append("\n");
-        saveData.append(Headquarters.foodSupply).append("\n");
-        saveData.append(Headquarters.wallet).append("\n");
+            toSave += h.getAsSaveable() + "\n";
+        for(Employee e : Headquarters.employeeList)
+            toSave += e.getAsSaveable() + "\n";
         try {
-            String encodedData = encode(saveData.toString());
-            System.out.println(encodedData);
-            System.out.println(decode(encodedData));
-            FileOutputStream fileOutputStream = new FileOutputStream("save.bin");
-            fileOutputStream.write(encodedData.getBytes());
-            fileOutputStream.close();
-        } catch (Exception e) {
+            FileWriter file = new FileWriter("save.txt");
+            file.write(toSave);
+            file.close();
+        }catch (Exception e) {
+            GUI.clearTerminal();
+            GUI.addToCommandOutput("Error saving game");
             e.printStackTrace();
         }
+        GUI.addToCommandOutput("Saved game successfully");
+        System.exit(0);
+
     }
 
+    public static void loadGame() {
+        String toLoad = "save.txt";
+        try {
+            FileReader file = new FileReader(toLoad);
+            StringBuilder s = new StringBuilder();
+            int c;
+            while ((c = file.read()) != -1)
+                s.append((char) c);
+            file.close();
+            System.out.println(s.toString());
+            String[] lines = s.toString().split("\n");
+            Headquarters.foodSupply = Integer.parseInt(lines[0].split("hqf")[1]);
+            Headquarters.wallet = Integer.parseInt(lines[1].split("hqw")[1]);
+            Factory.lastFactoryIDMade = Integer.parseInt(lines[2].split("lmfac")[1]);
+            Mine.lastMineIDMade = Integer.parseInt(lines[3].split("lmmin")[1]);
+            Farm.lastFarmIDMade = Integer.parseInt(lines[4].split("lmfar")[1]);
+            Housing.lastHousingIDMade = Integer.parseInt(lines[5].split("lmhou")[1]);
+            Employee.lastEmployeeIDMade = Integer.parseInt(lines[6].split("lmemp")[1]);
+            for(int i = 7; i < lines.length; i++) {
+                String[] parts = lines[i].split(" ");
+                if(parts[0].equalsIgnoreCase("prd")) {
+                    Headquarters.inventory.add(new Product(parts[1]));
+                }else if(parts[0].equalsIgnoreCase("min")) {
+                    Headquarters.mineList.add(new Mine(Headquarters.RawMaterial.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase())));
+                }else if(parts[0].equalsIgnoreCase("far")) {
+                    Headquarters.farmList.add(new Farm(Headquarters.CropType.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase())));
+                }else if(parts[0].equalsIgnoreCase("hou")) {
+                    Headquarters.housingList.add(new Housing(Housing.ResidentType.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase())));
+                }else if(parts[0].equalsIgnoreCase("emp")) {
+                    Headquarters.employeeList.add(new Employee(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Headquarters.Building.valueOf(parts[5].substring(0, 1).toUpperCase() + parts[5].substring(1).toLowerCase())));
+                }
+            }
+        } catch (Exception e) {
+            GUI.clearTerminal();
+            GUI.addToCommandOutput("Error loading game");
+            e.printStackTrace();
+        }
+        GUI.addToCommandOutput("Loaded game successfully");
+    }
     public static void main(String[] args) {
         Headquarters.initializeGame();
         saveGame();
+        loadGame();
     }
 }

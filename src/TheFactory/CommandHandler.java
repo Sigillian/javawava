@@ -13,6 +13,11 @@ public class CommandHandler {
         String mainCommand = parts[0].toLowerCase().trim();
 
         switch (mainCommand) {
+            case "save" -> Saver.saveGame();
+            case "load" -> {
+                Saver.loadGame();
+                Headquarters.printCorp();
+            }
             case "check", "c" -> check(parts);
             case "cc" -> Headquarters.printCorp();
             case "sell", "s" -> sell(parts);
@@ -185,7 +190,7 @@ public class CommandHandler {
         }
     }
     private static void exit() {
-        //TODO: Implement saving
+        Saver.saveGame();
         System.exit(0);
     }
 }

@@ -9,7 +9,7 @@ public class Housing {
         condo,
         apartmentComplex,
     }
-    private static int lastHousingIDMade = 0;
+    public static int lastHousingIDMade = 0;
     public final int housingID;
     private final ResidentType residentType;
     public ArrayList<Employee> residents = new ArrayList<>();
@@ -56,5 +56,12 @@ public class Housing {
         for(Employee e : residents)
             k.append(e.employeeID).append(", ");
         return "housing " + housingID + " type " + residentType + " holding following residents: [" + k + "]";
+    }
+
+    public String getAsSaveable() {
+        String employeeIds = "";
+        for(Employee e : residents)
+            employeeIds += e.employeeID + ",";
+        return "hou" + housingID + " " + residentType + "[" + employeeIds + "]";
     }
 }

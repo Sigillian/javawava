@@ -24,4 +24,8 @@ public class Product {
     public String toString() {
         return name + ": $" + price;
     }
+
+    public String getAsSaveable() {
+        return "prd"+name + " " + price;
+    }
 }

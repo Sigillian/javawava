@@ -25,7 +25,7 @@ public class Farm {
         else throw new Exception("Farm is full");
     }
     public void update() {
-        Headquarters.foodSupply += getProductValue(product);
+        Headquarters.foodSupply += getProductValue(product) * employees.size();
     }
 
     public void addFarmToGUI() {
@@ -37,5 +37,12 @@ public class Farm {
     @Override
     public String toString() {
         return "farm " + farmID + " making " + product;
+    }
+
+    public String getAsSaveable() {
+        String employeeIds = "";
+        for(Employee e : employees)
+            employeeIds += e.employeeID + ",";
+        return "far" + farmID + " " + product + "[" + employeeIds + "]";
     }
 }
