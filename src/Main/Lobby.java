@@ -25,4 +25,14 @@ public class Lobby {
             clearTerminal();
         }
     }
+    public static void main (String[] args) {
+        clearTerminal();
+        System.out.println("Pick:\n1 - wordle\n2-TheFactory");
+        int choice = Integer.parseInt(System.console().readLine());
+        if(choice == 1) {
+            Wordle.showMenu();
+        }else if(choice == 2) {
+            TheFactory.Headquarters.run();
+        }
+    }
 }

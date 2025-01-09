@@ -1,4 +1,9 @@
-package TheFactory;
+package TheFactory.Buildings;
+
+import TheFactory.Employee;
+import TheFactory.GUI;
+import TheFactory.Headquarters;
+import TheFactory.Helpers.Product;
 
 import java.util.ArrayList;
 
@@ -8,6 +13,7 @@ public class Factory {
     public static int lastFactoryIDMade = 0;
     public final ArrayList<Employee> employees = new ArrayList<>();
     public Factory(Product product) {
+        Headquarters.factoryList.add(this);
         this.product = product;
         factoryID = lastFactoryIDMade++;
     }

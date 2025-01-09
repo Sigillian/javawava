@@ -1,4 +1,4 @@
-package TheFactory;
+package TheFactory.Helpers;
 
 public class Product {
     public static Product[] prods = {

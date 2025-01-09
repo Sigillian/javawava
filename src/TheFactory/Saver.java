@@ -1,5 +1,11 @@
 package TheFactory;
 
+import TheFactory.Buildings.Factory;
+import TheFactory.Buildings.Farm;
+import TheFactory.Buildings.Housing;
+import TheFactory.Buildings.Mine;
+import TheFactory.Helpers.Product;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -8,7 +14,7 @@ public class Saver {
         GUI.clearTerminal();
         GUI.addToCommandOutput("Saving game...");
         String toSave = "";
-        toSave += "hqf"+Headquarters.foodSupply + "\n";
+        toSave += "hqf"+ Headquarters.foodSupply + "\n";
         toSave += "hqw"+Headquarters.wallet + "\n";
         toSave += "lmfac" + Factory.lastFactoryIDMade + "\n";
         toSave += "lmmin" + Mine.lastMineIDMade + "\n";

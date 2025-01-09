@@ -1,4 +1,7 @@
-package TheFactory;
+package TheFactory.Helpers;
+
+import TheFactory.GUI;
+import TheFactory.Headquarters;
 
 import java.util.ArrayList;
 import java.util.Random;

@@ -1,4 +1,8 @@
-package TheFactory;
+package TheFactory.Helpers;
+
+import TheFactory.Employee;
+import TheFactory.GUI;
+import TheFactory.Headquarters;
 
 import java.util.ArrayList;
 
@@ -24,7 +28,6 @@ public class JobBoard {
             Headquarters.assignEmployee(es.get(eNum - 1).employeeID, houseID, job, jobID);
             GUI.addToCommandOutput("Hired " + es.get(eNum - 1).toString());
             es.clear();
-            GUI.addToCommandOutput("Type exit to close job board.");
         }else {
             GUI.clearTerminal();
             GUI.addToCommandOutput("Job board is closed.");

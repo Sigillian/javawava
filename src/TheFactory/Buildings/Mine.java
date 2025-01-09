@@ -1,4 +1,8 @@
-package TheFactory;
+package TheFactory.Buildings;
+
+import TheFactory.Employee;
+import TheFactory.GUI;
+import TheFactory.Headquarters;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,6 +30,7 @@ public class Mine {
     public Mine() {
         mineID = lastMineIDMade++;
         this.product = Headquarters.RawMaterial.values()[new Random().nextInt(Headquarters.RawMaterial.values().length)];
+        Headquarters.mineList.add(this);
     }
     public void addEmployee(Employee e) throws Exception {
         if(employees.size() < 6)

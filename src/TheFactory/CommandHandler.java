@@ -1,5 +1,13 @@
 package TheFactory;
 
+import TheFactory.Buildings.Factory;
+import TheFactory.Buildings.Farm;
+import TheFactory.Buildings.Housing;
+import TheFactory.Buildings.Mine;
+import TheFactory.Helpers.JobBoard;
+import TheFactory.Helpers.Product;
+import TheFactory.Helpers.Shop;
+
 import java.util.Arrays;
 
 public class CommandHandler {
@@ -12,7 +20,10 @@ public class CommandHandler {
 
         String mainCommand = parts[0].toLowerCase().trim();
 
+
+
         switch (mainCommand) {
+            case "help" -> help();
             case "save" -> Saver.saveGame();
             case "load" -> {
                 Saver.loadGame();
@@ -20,6 +31,7 @@ public class CommandHandler {
             }
             case "check", "c" -> check(parts);
             case "cc" -> Headquarters.printCorp();
+            
             case "sell", "s" -> sell(parts);
             case "shop", "sp" -> Shop.openShop();
             case "demolish", "d" -> {
@@ -43,12 +55,17 @@ public class CommandHandler {
                 GUI.clearTerminal();
                 GUI.addToCommandOutput("Autosell is not yet implemented.");
             }
-            case "assign" -> System.out.print("LALALALLA");
+            case "assign" -> {
+                break;
+            }
             case "fire" -> {
                 try {
                     Headquarters.killEmployee(Integer.parseInt(parts[1]));
-                }catch (Exception e) {
+                }catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                     GUI.addToCommandOutput("Invalid employee ID");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             case "clear" -> GUI.clearTerminal();
@@ -68,6 +85,63 @@ public class CommandHandler {
             }
         }
     }
+    public static void help() {
+        GUI.clearTerminal();
+        GUI.addToCommandOutput("Available Commands:\n");
+
+        GUI.addToCommandOutput("General Commands:");
+        GUI.addToCommandOutput(" - check [TYPE] [ID]: View detailed information about a specific entity.");
+        GUI.addToCommandOutput("   - Types: corp, mine, farm, factory, housing, employee");
+        GUI.addToCommandOutput("   - Example: check farm 2");
+        GUI.addToCommandOutput(" - save: Save your current game progress.");
+        GUI.addToCommandOutput(" - load: Load a previously saved game.");
+        GUI.addToCommandOutput(" - clear: Clear the terminal display.");
+        GUI.addToCommandOutput(" - exit: Save the game and exit.");
+
+        GUI.addToCommandOutput("\nConstruction Commands:");
+        GUI.addToCommandOutput(" - construct [TYPE] [DETAIL]: Build a new building of the specified type.");
+        GUI.addToCommandOutput("   - Types: factory [PRODUCT], mine [MATERIAL], farm [CROP], housing [RESIDENT_TYPE]");
+        GUI.addToCommandOutput("   - Example: construct mine coal");
+
+        GUI.addToCommandOutput("\nDemolition Commands:");
+        GUI.addToCommandOutput(" - demolish [TYPE] [ID]: Destroy a building without reimbursement.");
+        GUI.addToCommandOutput("   - Types: factory, mine, farm, housing");
+        GUI.addToCommandOutput("   - Example: demolish factory 1");
+
+        GUI.addToCommandOutput("\nShop Commands:");
+        GUI.addToCommandOutput(" - shop: Open the shop interface.");
+        GUI.addToCommandOutput(" - buy [ITEM]: Purchase an item from the shop.");
+        GUI.addToCommandOutput("   - Example: buy pickaxe");
+
+        GUI.addToCommandOutput("\nEmployee Commands:");
+        GUI.addToCommandOutput(" - jobboard: Open the job board to view available hires.");
+        GUI.addToCommandOutput(" - hire [JOB_ID] [BUILDING_TYPE] [BUILDING_ID] [EMPLOYEE_ID]: Hire an employee for a building.");
+        GUI.addToCommandOutput("   - Example: hire 1 factory 2 101");
+        GUI.addToCommandOutput(" - fire [EMPLOYEE_ID]: Remove an employee from your corporation.");
+        GUI.addToCommandOutput("   - Example: fire 101");
+
+        GUI.addToCommandOutput("\nResource Management Commands:");
+        GUI.addToCommandOutput(" - sell [RESOURCE] [AMOUNT]: Sell a specific amount of a resource.");
+        GUI.addToCommandOutput("   - Use '*' as the amount to sell all available resources.");
+        GUI.addToCommandOutput("   - Example: sell iron 50");
+        GUI.addToCommandOutput(" - autosell [TYPE] [ID] [EXCESS]: Automatically sell products from a building when storage exceeds the specified limit.");
+        GUI.addToCommandOutput("   - Types: factory, mine, farm");
+        GUI.addToCommandOutput("   - Example: autosell factory 3 100");
+
+        GUI.addToCommandOutput("\nProduction Commands:");
+        GUI.addToCommandOutput(" - make [PRODUCT] [FACTORY_ID]: Assign a factory to produce the specified product.");
+        GUI.addToCommandOutput("   - Example: make bread 2");
+        GUI.addToCommandOutput(" - autosell: This feature is not yet implemented.");
+
+        GUI.addToCommandOutput("\nMiscellaneous Commands:");
+        GUI.addToCommandOutput(" - help: Display this help menu.");
+        GUI.addToCommandOutput(" - assign [EMPLOYEE_ID] [BUILDING_TYPE] [BUILDING_ID]: Assign an employee to a building.");
+        GUI.addToCommandOutput("   - Example: assign 101 mine 2");
+
+        GUI.addToCommandOutput("\nTip: Use 'check corp' to see an overview of your corporation's status.\n");
+    }
+
+
     private static void sell(String[] parts) {
         try {
             if(Headquarters.rawMaterialStorage.getRawMaterialCount(Headquarters.RawMaterial.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase())) > Integer.parseInt(parts[2])) {
@@ -79,7 +153,12 @@ public class CommandHandler {
                 GUI.clearTerminal();
                 GUI.addToCommandOutput("Not enough " + parts[1] + " in storage");
             }
-        }catch (IllegalArgumentException e) {
+        }catch (NumberFormatException e) {
+            if(parts[2].equals("*"))
+                Headquarters.rawMaterialStorage.removeFromStorage(Headquarters.RawMaterial.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase()), Headquarters.rawMaterialStorage.getRawMaterialCount(Headquarters.RawMaterial.valueOf(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase())));
+            else GUI.addToCommandOutput("Invalid number");
+        }
+        catch (IllegalArgumentException e) {
             e.printStackTrace();;
             System.out.println(Arrays.deepToString(parts));
             System.out.println(parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1).toLowerCase());
@@ -111,6 +190,7 @@ public class CommandHandler {
     }
 
     private static void check(String[] parts) {
+        GUI.clearTerminal();
         try {
             switch (parts[1]) {
                 case "list" -> {
@@ -123,19 +203,53 @@ public class CommandHandler {
                         case "employee" -> Headquarters.employeeList.forEach(Employee::addEmployeeToGUI);
                         default -> {
                             GUI.clearTerminal();
-                            GUI.addToCommandOutput("Not a checkable item");
+                            GUI.addToCommandOutput(parts[2] + " is not a checkable item");
                         }
                     }
                 }
                 case "corp", "c" -> Headquarters.printCorp();
-                case "mine" -> Headquarters.mineList.get(Integer.parseInt(parts[2])).addMineToGUI();
-                case "farm" -> Headquarters.farmList.get(Integer.parseInt(parts[2])).addFarmToGUI();
-                case "factory" -> Headquarters.factoryList.get(Integer.parseInt(parts[2])).addFactoryToGUI();
-                case "housing" -> Headquarters.housingList.get(Integer.parseInt(parts[2])).addHousingToGUI();
-                case "employee" -> Headquarters.employeeList.get(Integer.parseInt(parts[2])).addEmployeeToGUI();
+                case "mine" -> {
+                    for(Mine m : Headquarters.mineList)
+                        if(m.mineID == Integer.parseInt(parts[2])) {
+                            m.addMineToGUI();
+                            break;
+                        }
+                    GUI.addToCommandOutput("Mine ID not found");
+                }
+                case "farm" -> {
+                    for(Farm f : Headquarters.farmList)
+                        if(f.farmID == Integer.parseInt(parts[2])) {
+                            f.addFarmToGUI();
+                            break;
+                        }
+                    GUI.addToCommandOutput("Farm ID not found");
+                }
+                case "factory" -> {
+                    for(Factory f : Headquarters.factoryList)
+                        if(f.factoryID == Integer.parseInt(parts[2])) {
+                            f.addFactoryToGUI();
+                            break;
+                        }
+                    GUI.addToCommandOutput("Factory ID not found");
+                }
+                case "housing" -> {
+                    for(Housing h : Headquarters.housingList)
+                        if(h.housingID == Integer.parseInt(parts[2])) {
+                            h.addHousingToGUI();
+                            break;
+                        }
+                }
+                case "employee" -> {
+                    for(Employee e : Headquarters.employeeList)
+                        if(e.employeeID == Integer.parseInt(parts[2])) {
+                            e.addEmployeeToGUI();
+                            break;
+                        }
+                    GUI.addToCommandOutput("Employee ID not found");
+                }
                 default -> {
                     GUI.clearTerminal();
-                    GUI.addToCommandOutput("Not a checkable item");
+                    GUI.addToCommandOutput(parts[2] + " is not a checkable item");
                 }
             }
         }catch(ArrayIndexOutOfBoundsException e) {
@@ -149,48 +263,68 @@ public class CommandHandler {
             switch (type[1]) {
                 case "factory" -> {
                     try {
-                        Headquarters.factoryList.add(new Factory(new Product(type[2])));
+                        Factory f = (new Factory(new Product(type[2])));
                         GUI.clearTerminal();
                         GUI.addToCommandOutput("Factory built successfully");
                         Headquarters.factoryList.getLast().addFactoryToGUI();
                     } catch (Exception e) {
                         GUI.addToCommandOutput("Invalid product");
+                        return;
                     }
+                    return;
                 }
                 case "mine" -> {
                     if(Headquarters.inventory.contains(Product.prods[0])) {
                         try {
-                            Headquarters.mineList.add(new Mine(Headquarters.RawMaterial.valueOf(type[2])));
+                            Mine m = (new Mine(Headquarters.RawMaterial.valueOf(type[2])));
                         }catch (Exception e) {
                             GUI.addToCommandOutput("Invalid product");
+                            return;
                         }
                     }else if(type.length == 3){
                         GUI.addToCommandOutput("No Dowsing-Rod, cannot specify raw material");
+                        return;
                     }else {
                         Headquarters.mineList.add(new Mine());
                     }
+                    return;
                 }
                 case "farm" -> {
                     try {
-                        Headquarters.farmList.add(new Farm(Headquarters.CropType.valueOf(type[2])));
+                        Farm f =  (new Farm(Headquarters.CropType.valueOf(type[2].substring(0, 1).toUpperCase() + type[2].substring(1).toLowerCase())));
                     }catch (Exception e) {
                         GUI.addToCommandOutput("Invalid product");
+                        return;
                     }
+                    return;
                 }
                 case "housing" -> {
                     try {
-                        Headquarters.housingList.add(new Housing(Housing.ResidentType.valueOf(type[2])));
+                        Housing h = (new Housing(Housing.ResidentType.valueOf(type[2])));
                     }catch (Exception e) {
                         GUI.addToCommandOutput("Invalid product");
+                        return;
                     }
+                    return;
                 }
             }
         }catch(ArrayIndexOutOfBoundsException e) {
             GUI.addToCommandOutput("Invalid command: no input provided.");
+            return;
         }
     }
     private static void exit() {
         Saver.saveGame();
         System.exit(0);
+    }
+
+    private static void assign (String[] parts) {
+        try {
+            if(Headquarters.housingList.get(Integer.parseInt(parts[2].substring(0, 1).toUpperCase() + parts[2].substring(1).toLowerCase())) != null) {
+                Headquarters.assignEmployee(Integer.parseInt(parts[1]), Integer.parseInt(parts[2].substring(0, 1).toUpperCase() + parts[2].substring(1).toLowerCase()), Headquarters.Building.Housing, Headquarters.housingList.get(Integer.parseInt(parts[2].substring(0, 1).toUpperCase() + parts[2].substring(1).toLowerCase())).housingID);
+            }else GUI.addToCommandOutput("Invalid housing ID");
+        }catch (NumberFormatException e) {
+            GUI.addToCommandOutput("Invalid employee ID");
+        }
     }
 }

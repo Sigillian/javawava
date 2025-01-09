@@ -66,7 +66,6 @@ import java.util.Random;
         try {
             if (age > 7300 && age < 22000 && new Random().nextInt() % (525 / (Headquarters.foodSupply * 5 / ((Headquarters.employeeList.size()) + 1))) == 0) {//Add a child at random
                 Employee e = generateChild(this);
-                Headquarters.employeeList.add(e);
                 Headquarters.housingList.get(new Random().nextInt(Headquarters.housingList.size())).addEmployee(e);
             }
         }catch (Exception _) {}
@@ -81,8 +80,8 @@ import java.util.Random;
     @Override
     public String toString() {
         if(jobType != null)
-            return "\nEmployee ID: " + employeeID + "\n\tStrength: " + strength + "\n\tIntelligence: " +intelligence + "\n\tAge: " + ((int)age / 365);
-        else return "\n\tStrength: " + strength + "\n\tIntelligence: " +intelligence + "\n\tAge: " + ((int)age / 365);
+            return "\nEmployee ID: " + employeeID + "\n\tStrength: " + strength + "\n\tIntelligence: " +intelligence + "\n\tAge: " + ((int)age / 365) + "\n\n";
+        else return "\n\tStrength: " + strength + "\n\tIntelligence: " +intelligence + "\n\tAge: " + ((int)age / 365) + "\n\n";
     }
 
     public void addEmployeeToGUI() {
@@ -90,6 +89,7 @@ import java.util.Random;
         GUI.addToCommandOutput("Strength: " + strength);
         GUI.addToCommandOutput("Intelligence: " + intelligence);
         GUI.addToCommandOutput("Age: " + (age / 365));
+        GUI.addToCommandOutput("----------\n");
     }
 
     public String getAsSaveable() {

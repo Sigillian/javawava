@@ -1,5 +1,12 @@
 package TheFactory;
 
+import TheFactory.Buildings.Factory;
+import TheFactory.Buildings.Farm;
+import TheFactory.Buildings.Housing;
+import TheFactory.Buildings.Mine;
+import TheFactory.Helpers.Product;
+import TheFactory.Helpers.Updater;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,18 +199,13 @@ public class Headquarters {
     public final static ArrayList<Employee> employeeList = new ArrayList<>();
     public static int foodSupply = 0, wallet = 0;
     public static void killEmployee(int eID) {
-        for(Employee e : employeeList)
-            if(e.employeeID == eID)
-                e = null;
-        employeeList.removeIf(Objects::isNull);
-        for(Factory f : factoryList)
-            f.employees.removeIf(Objects::isNull);
-        for(Farm f : farmList)
-            f.employees.removeIf(Objects::isNull);
-        for(Mine m : mineList)
-            m.employees.removeIf(Objects::isNull);
-        for(Housing h : housingList)
-            h.residents.removeIf(Objects::isNull);
+        for(int i = 0; i < employeeList.size(); i++) {
+            if(employeeList.get(i).employeeID == eID) {
+                employeeList.set(i, null);
+                employeeList.remove(i);
+                return;
+            }
+        }
         System.gc();
     }
     public static void destroyBuilding(Building type, int ID) {
@@ -361,7 +363,7 @@ public class Headquarters {
     }
 
 
-    public static void main(String[] args) {
+    public static void run() {
         SwingUtilities.invokeLater(GUI::new);
         initializeGame();
 

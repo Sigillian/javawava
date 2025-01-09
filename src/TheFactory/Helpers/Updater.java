@@ -1,4 +1,10 @@
-package TheFactory;
+package TheFactory.Helpers;
+
+import TheFactory.Buildings.Factory;
+import TheFactory.Buildings.Farm;
+import TheFactory.Buildings.Housing;
+import TheFactory.Buildings.Mine;
+import TheFactory.Headquarters;
 
 public class Updater extends Thread{
     @Override

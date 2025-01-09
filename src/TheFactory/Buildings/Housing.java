@@ -1,4 +1,8 @@
-package TheFactory;
+package TheFactory.Buildings;
+
+import TheFactory.Employee;
+import TheFactory.GUI;
+import TheFactory.Headquarters;
 
 import java.util.ArrayList;
 
