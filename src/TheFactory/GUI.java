@@ -14,6 +14,12 @@ public class GUI {
     private static JTextField inputField; // Input field for user commands
     private static JTextArea commandHistory; // Area for command history
 
+    public static int fontSize = 28;
+
+    public static void changeFontSize(int size) {
+        fontSize = size;
+        displayArea.setFont(loadCustomFont("src/TheFactory/Josefin.ttf", fontSize));
+    }
     // Constructor for GUI
     public GUI() {
         // Create the main frame
@@ -26,7 +32,7 @@ public class GUI {
         Color textColor = Color.GREEN;
 
         // Load custom font
-        Font customFont = loadCustomFont("src/TheFactory/steampunk.ttf", 38f);
+        Font customFont = loadCustomFont("src/TheFactory/Josefin.ttf", 28f);
 
         // Main panel with border layout
         JPanel panel = new JPanel(new BorderLayout());
@@ -133,14 +139,16 @@ public class GUI {
     }
 
     // Method to load a custom font
-    private Font loadCustomFont(String path, float size) {
+    private static Font loadCustomFont(String path, float size) {
         try {
             File fontFile = new File(path);
             Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-            return font.deriveFont(size);
+            // Apply the bold style when deriving the font
+            return font.deriveFont(1, size);
         } catch (FontFormatException | IOException e) {
             System.err.println("Error loading font: " + e.getMessage());
-            return new Font("Monospaced", Font.PLAIN, 18); // Fallback font
+            return new Font("Monospaced", Font.BOLD, 18); // Fallback font
         }
     }
+
 }

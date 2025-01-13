@@ -33,6 +33,7 @@ public class Saver {
             toSave += h.getAsSaveable() + "\n";
         for(Employee e : Headquarters.employeeList)
             toSave += e.getAsSaveable() + "\n";
+        toSave += "fontSize" + GUI.fontSize + "\n";
         try {
             FileWriter file = new FileWriter("save.txt");
             file.write(toSave);
@@ -43,8 +44,6 @@ public class Saver {
             e.printStackTrace();
         }
         GUI.addToCommandOutput("Saved game successfully");
-        System.exit(0);
-
     }
 
     public static void loadGame() {

@@ -24,7 +24,7 @@ public class CommandHandler {
 
         switch (mainCommand) {
             case "help" -> help();
-            case "save" -> Saver.saveGame();
+            case "settings", "sett" -> settings(parts);
             case "load" -> {
                 Saver.loadGame();
                 Headquarters.printCorp();
@@ -258,6 +258,27 @@ public class CommandHandler {
             GUI.addToCommandOutput("Invalid ID");
         }
     }
+    private static void settings(String[] parts) {
+        try {
+            switch (parts[1]) {
+                case "font" -> {
+                    try {
+                        GUI.changeFontSize(Integer.parseInt(parts[2]));
+                    }catch (NumberFormatException e) {
+                        if(parts[2].equalsIgnoreCase("default"))
+                            GUI.changeFontSize(28);
+                        else
+                            GUI.addToCommandOutput("Invalid font size");
+                    } catch (Exception e) {
+                        GUI.addToCommandOutput("Invalid font size");
+                    }
+                }
+            }
+        }catch(ArrayIndexOutOfBoundsException e) {
+            GUI.addToCommandOutput("Invalid command");
+        }
+    }
+
     private static void construct (String[] type) {
         try {
             switch (type[1]) {
